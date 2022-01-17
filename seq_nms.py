@@ -170,11 +170,11 @@ def delete_sequence(sequence_to_delete, sequence_frame_index, scores, boxes, box
     '''
     for i,box_idx in enumerate(sequence_to_delete):
         other_boxes = boxes[sequence_frame_index + i]
-        box_areas = compute_area(other_boxes.astype(np.double))
+        box_areas = compute_area(other_boxes)
         seq_box_area = box_areas[box_idx]
         seq_box = boxes[sequence_frame_index+i][box_idx]
 
-        overlaps = compute_overlap_areas_given(np.expand_dims(seq_box,axis=0).astype(np.double), boxes[sequence_frame_index+i,:].astype(np.double), box_areas.astype(np.double))[0]
+        overlaps = compute_overlap_areas_given(np.expand_dims(seq_box,axis=0), boxes[sequence_frame_index+i,:], box_areas)[0]
         deletes=[ovr_idx for ovr_idx,IoU in enumerate(overlaps) if IoU >= suppress_threshold]
 
         if sequence_frame_index + i < len(box_graph): 
