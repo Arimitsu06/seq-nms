@@ -2,7 +2,7 @@
 
 import numpy as np
 import copy 
-from seqnms-edit import compute_overlap_areas_given, compute_area
+from compute_overlap import compute_overlap_areas_given, compute_area
 
 '''
 CONF_THRESH = 0.5
