@@ -43,16 +43,16 @@ def build_box_sequences(boxes, scores, labels=[], linkage_threshold=0.5):
         boxes_f, scores_f = boxes[f], scores[f]
         boxes_f1, scores_f1 = boxes[f+1], scores[f+1]
         if f == 0:
-            areas_f = compute_area(boxes_f.astype(np.double)) #(boxes_f[:,2] - boxes_f[:,0] + 1) * (boxes_f[:,3] - boxes_f[:,1] + 1)
+            areas_f = compute_area(boxes_f) #(boxes_f[:,2] - boxes_f[:,0] + 1) * (boxes_f[:,3] - boxes_f[:,1] + 1)
         else: 
             areas_f = areas_f1
 
         # calculate areas for boxes in next frame
-        areas_f1 = compute_area(boxes_f1.astype(np.double)) #(boxes_f1[:,2] - boxes_f1[:,0] + 1) * (boxes_f1[:,3] - boxes_f1[:,1] + 1)
+        areas_f1 = compute_area(boxes_f1) #(boxes_f1[:,2] - boxes_f1[:,0] + 1) * (boxes_f1[:,3] - boxes_f1[:,1] + 1)
 
         adjacency_matrix = []
         for i, box in enumerate(boxes_f):
-            overlaps = compute_overlap_areas_given(np.expand_dims(box,axis=0).astype(np.double), boxes_f1.astype(np.double), areas_f1.astype(np.double) )[0]
+            overlaps = compute_overlap_areas_given(np.expand_dims(box,axis=0), boxes_f1, areas_f)[0]
 
             # add linkage if IoU greater than threshold and boxes have same labels i.e class  
             if len(labels) == 0 :
