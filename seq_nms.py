@@ -14,8 +14,8 @@ def seq_nms(boxes, scores, labels=None, linkage_threshold=0.5, nms_threshold=0.3
     ''' Filter detections using the seq-nms algorithm. Boxes and classifications should be organized sequentially along the first dimension 
     corresponding to the input frame.  
     Args 
-        boxes                 : Tensor of shape (num_frames, num_boxes, 4) containing the boxes in (x1, y1, x2, y2) format.
-        scores                : Tensor of shape (num_frames, num_boxes) containing the confidence score for each box.
+        boxes                  : List of tensors of shape (num_boxes, 4) containing the boxes in (x1, y1, x2, y2) format. 
+        scores                : List of tensors of shape (num_boxes) containing the confidence score for each box.
         linkage_threshold     : Threshold used to link two boxes in adjacent frames 
         nms_threshold         : Threshold for the IoU value to determine when a box should be suppressed with regards to a best sequence.
     '''
@@ -28,8 +28,8 @@ def build_box_sequences(boxes, scores, labels=[], linkage_threshold=0.5):
     ''' Build bounding box sequences across frames. A sequence is a set of boxes that are linked in a video
     where we define a linkage as boxes in adjacent frames (of the same class) with IoU above linkage_threshold (0.5 by default).
     Args
-        boxes                  : Tensor of shape (num_frames, num_boxes, 4) containing the boxes in (x1, y1, x2, y2) format. 
-        scores                : Tensor of shape (num_frames, num_boxes) containing the confidence score for each box.
+        boxes                  : List of tensors of shape (num_boxes, 4) containing the boxes in (x1, y1, x2, y2) format. 
+        scores                : List of tensors of shape (num_boxes) containing the confidence score for each box.
         linkage_threshold      : Threshold for the IoU value to determine if two boxes in neighboring frames are linked 
     Returns 
         A list of shape (num_frames - 1, num_boxes, k, 1) where k is the number of edges to boxes in neighboring frame (s.t. 0 <= k <= num_boxes at f+1)
@@ -37,9 +37,11 @@ def build_box_sequences(boxes, scores, labels=[], linkage_threshold=0.5):
     '''
     box_graph = []
     # iterate over neighboring frames 
-    for f in range(boxes.shape[0] - 1):
-        boxes_f, scores_f = boxes[f,:,:], scores[f,:]
-        boxes_f1, scores_f1 = boxes[f+1,:,:], scores[f+1,:]
+    for f in range(len(boxes) - 1):
+#         boxes_f, scores_f = boxes[f,:,:], scores[f,:]
+#         boxes_f1, scores_f1 = boxes[f+1,:,:], scores[f+1,:]
+        boxes_f, scores_f = boxes[f], scores[f]
+        boxes_f1, scores_f1 = boxes[f+1], scores[f+1]
         if f == 0:
             areas_f = compute_area(boxes_f.astype(np.double)) #(boxes_f[:,2] - boxes_f[:,0] + 1) * (boxes_f[:,3] - boxes_f[:,1] + 1)
         else: 
