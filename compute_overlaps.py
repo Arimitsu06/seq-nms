@@ -60,6 +60,7 @@ def compute_overlap_areas_given(boxes, query_boxes, query_areas):
     K = query_boxes.shape[0]
     overlaps = np.zeros((N, K), dtype=np.float64)
     for k in range(K):
+        print(K)
         box_area = query_areas[k]
         for n in range(N):
             iw = (
